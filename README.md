@@ -2,6 +2,18 @@
 
 A Doom-inspired theme for [Beekeeper Studio](https://www.beekeeperstudio.io).
 
+![Hellfire dark mode: SQL editor and results grid](screenshots/editor-dark.png)
+
+## Screenshots
+
+### Dark ("Inferno") and light ("Phobos")
+
+| Dark | Light |
+| ---- | ----- |
+| ![Dark mode sidebar with super shotgun schema folders](screenshots/sidebar-dark.png) | ![Light mode sidebar with super shotgun schema folders](screenshots/sidebar-light.png) |
+
+![Hellfire light mode: SQL editor and results grid](screenshots/editor-light.png)
+
 ## Features
 
 - **Dark mode ("Inferno")**: scorched near-black background with a hellfire-red accent and warm ash-gray neutrals.
