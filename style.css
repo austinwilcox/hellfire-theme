@@ -1,0 +1,366 @@
+/*
+ * HELLFIRE — a Doom-inspired theme for Beekeeper Studio
+ *
+ * Dark  = "Inferno":  scorched black-red backdrop, hellfire accent,
+ *                     gunmetal HUD statusbar, nukage-green strings,
+ *                     plasma-blue variables, BFG-green constants.
+ * Light = "Phobos":   UAC base daylight. Bone-white panels, rusted steel,
+ *                     blood-red accent.
+ *
+ * Layers (see docs/theme_development/color-system.md):
+ *   1. Seeds       --background, --base-*        -> generated 12-step scales
+ *   2. Components  --sidebar-bg, --btn-*, ...    -> per-component overrides
+ *   3. Syntax      --syntax-*, --editor-*-fg
+ *   4. Flavor      a little raw CSS for the HUD look (sharp corners, glow, bevels)
+ */
+
+/* ==========================================================================
+   1. Seeds
+   ========================================================================== */
+
+.dark-theme {
+  --background: #0d0807;     /* scorched hell-rock */
+  --base-gray: #6e5a52;      /* ash with a hint of rust, so neutrals feel warm */
+  --base-accent: #e0301e;    /* hellfire red */
+
+  --base-red: #ff3b2f;       /* blood */
+  --base-orange: #ff7a1a;    /* imp fireball */
+  --base-yellow: #ffc832;    /* keycard yellow */
+  --base-green: #5fdc3c;     /* nukage */
+  --base-blue: #4aa8ff;      /* plasma */
+  --base-purple: #a35cff;    /* soulsphere-ish */
+  --base-pink: #ff4f8b;      /* demon flesh */
+
+  /* Theme-local palette */
+  --hf-fire: #e0301e;
+  --hf-fire-hot: #ff6a1a;
+  --hf-ember: #ffb347;
+  --hf-nukage: #5fdc3c;
+  --hf-bfg: #7dff6b;
+  --hf-plasma: #4aa8ff;
+  --hf-gunmetal: #1d1a19;
+  --hf-gunmetal-hi: #3a3330;
+  --hf-gunmetal-lo: #080505;
+  --hf-hud-text: #ff3b2f;
+  --hf-glow: 0 0 6px rgba(224, 48, 30, 0.75), 0 0 18px rgba(255, 106, 26, 0.35);
+  --hf-glow-soft: 0 0 10px rgba(224, 48, 30, 0.35);
+}
+
+.light-theme {
+  --background: #f3ece2;     /* bone */
+  --base-gray: #7c6a5e;      /* rusted steel */
+  --base-accent: #b3170d;    /* dried blood */
+
+  --base-red: #c41d12;
+  --base-orange: #c25200;
+  --base-yellow: #9a7300;
+  --base-green: #2e7d12;
+  --base-blue: #1a5fb4;
+  --base-purple: #6b2fc0;
+  --base-pink: #b8174e;
+
+  --hf-fire: #b3170d;
+  --hf-fire-hot: #d9480f;
+  --hf-ember: #a85a00;
+  --hf-nukage: #2e7d12;
+  --hf-bfg: #2e7d12;
+  --hf-plasma: #1a5fb4;
+  --hf-gunmetal: #3b3431;
+  --hf-gunmetal-hi: #5c524c;
+  --hf-gunmetal-lo: #231e1c;
+  --hf-hud-text: #ff5a47;
+  --hf-glow: 0 0 0 1px rgba(179, 23, 13, 0.4), 0 2px 8px rgba(179, 23, 13, 0.25);
+  --hf-glow-soft: 0 0 0 1px rgba(179, 23, 13, 0.2);
+}
+
+/* ==========================================================================
+   2. Component tokens (both modes)
+   ========================================================================== */
+
+.light-theme,
+.dark-theme {
+  /* Light text on red fills */
+  --primary-contrast: #ffffff;
+  --red-contrast: #ffffff;
+  --orange-contrast: #000000;
+  --yellow-contrast: #000000;
+  --pink-contrast: #000000;
+  --purple-contrast: #ffffff;
+
+  /* Chunky, angular — no rounded corners in hell */
+  --btn-border-radius: 0;
+  --btn-small-border-radius: 0;
+  --input-border-radius: 0;
+  --checkbox-border-radius: 0;
+  --panel-border-radius: 0;
+  --menu-border-radius: 0;
+  --alert-border-radius: 0;
+
+  /* Buttons */
+  --btn-primary-bg: var(--hf-fire);
+  --btn-primary-bg-hover: var(--hf-fire-hot);
+  --btn-primary-fg: #ffffff;
+  --btn-primary-shadow: var(--hf-glow);
+  --btn-fg-hover: var(--primary-text);
+  --btn-icon-fg-hover: var(--primary-text);
+
+  /* Inputs */
+  --input-border-focus: 1px solid var(--hf-fire);
+  --focus-ring: 2px solid var(--hf-fire);
+  --checkbox-checked-bg: var(--hf-fire);
+  --checkbox-checked-fg: #ffffff;
+
+  /* Links / selection */
+  --link-fg: var(--primary-text);
+  --selection-bg: var(--red-a5);
+
+  /* Panels & menus get a riveted-steel border */
+  --panel-border: 1px solid var(--red-a6);
+  --menu-border: 1px solid var(--red-a6);
+  --panel-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(224, 48, 30, 0.12);
+
+  /* Gutters between panes */
+  --gutter-border: var(--red-a4);
+  --primary-sidebar-gutter-border: var(--red-a4);
+  --secondary-sidebar-gutter-border: var(--red-a4);
+
+  /* Sidebar rail */
+  --sidebar-rail-fg: var(--gray-9);
+  --sidebar-rail-fg-hover: var(--hf-fire-hot);
+  --sidebar-rail-active-fg: var(--hf-fire);
+
+  /* Nav pills */
+  --nav-pill-active-fg: var(--primary-text);
+  --nav-pill-active-shadow: inset 0 -2px var(--hf-fire);
+
+  /* Entity icons — color-code by "ammo type" */
+  --icon-table-fg: var(--hf-ember);
+  --icon-view-fg: var(--hf-plasma);
+  --icon-materialized-view-fg: var(--hf-nukage);
+  --icon-schema-fg: var(--red-11);
+  --icon-routine-fg: var(--hf-nukage);
+  --icon-function-fg: var(--hf-nukage);
+  --icon-procedure-fg: var(--hf-plasma);
+  --icon-query-fg: var(--hf-fire-hot);
+
+  /* Data grid */
+  --table-header-selected-bg: var(--hf-fire);
+  --table-header-selected-fg: #ffffff;
+  --table-header-shadow: inset 0 -1px var(--red-a6);
+  --table-row-header-shadow: 1px 0 var(--red-a5);
+  --table-range-border: var(--hf-fire-hot);
+  --table-range-handle-bg: var(--hf-fire-hot);
+  --table-cell-selected-bg: var(--red-a3);
+  --table-cell-binary-fg: var(--hf-plasma);
+
+  /* Statusbar = the HUD */
+  --statusbar-bg: var(--hf-gunmetal);
+  --statusbar-fg: var(--hf-hud-text);
+  --statusbar-fg-inverse: #ffffff;
+
+  /* Tabs */
+  --tab-active-fg: var(--primary-text);
+
+  /* Badges / kbd */
+  --badge-primary-bg: var(--hf-fire);
+  --badge-primary-fg: #ffffff;
+
+  /* Scrollbar */
+  --scrollbar-thumb: var(--red-a5);
+
+  /* Preloader */
+  --preloader-accent: var(--hf-fire);
+
+  /* Editor chrome */
+  --editor-cursor-bg: var(--hf-fire-hot);
+  --editor-fatcursor-bg: var(--hf-fire-hot);
+  --editor-selected-bg: var(--red-a5);
+  --editor-activeline-bg: var(--red-a2);
+  --editor-activeline-gutter-bg: var(--red-a3);
+  --editor-linenumber-fg: var(--red-a7);
+  --editor-linenumber-active-fg: var(--hf-fire-hot);
+  --editor-matchingbracket-fg: var(--hf-ember);
+  --editor-matchingbracket-bg: var(--orange-a4);
+  --editor-searchmatch-bg: var(--orange-a5);
+  --editor-searchmatch-selected-bg: var(--orange-a7);
+
+  /* Vim panel */
+  --editor-vim-panel-insert-bg: var(--green-a3);
+  --editor-vim-panel-insert-fg: var(--hf-nukage);
+  --editor-vim-panel-visual-bg: var(--blue-a3);
+  --editor-vim-panel-visual-fg: var(--hf-plasma);
+  --editor-vim-panel-replace-bg: var(--red-a4);
+  --editor-vim-panel-replace-fg: var(--hf-fire-hot);
+
+  /* ========================================================================
+     3. Syntax — weapons locker
+     ======================================================================== */
+
+  --syntax-keyword: var(--red-11);       /* SELECT, FROM: hellfire */
+  --syntax-string: var(--green-11);      /* 'strings': nukage */
+  --syntax-constant: var(--purple-11);   /* 42, NULL, TRUE: soulsphere */
+  --syntax-variable: var(--blue-11);     /* columns, aliases: plasma */
+  --syntax-function: var(--orange-11);   /* COUNT(): imp fireball */
+  --syntax-type: var(--yellow-11);       /* INTEGER, TEXT: keycard */
+  --syntax-decorator: var(--pink-11);
+  --syntax-link: var(--blue-11);
+  --syntax-diff: var(--red-11);
+  --syntax-comment: var(--gray-9);       /* -- comments: ash */
+  --syntax-punctuation: var(--gray-11);
+
+  --editor-operatorKeyword-fg: var(--red-11);
+  --editor-null-fg: var(--purple-11);
+  --editor-bool-fg: var(--purple-11);
+  --editor-number-fg: var(--purple-11);
+  --editor-sql-alias-fg: var(--blue-11);
+
+  /* Mongo shell */
+  --mongo-shell-mongo-prompt-fg: var(--hf-fire);
+}
+
+/* Dark mode: punch syntax up toward full saturation */
+.dark-theme {
+  --syntax-keyword: #ff4a3a;
+  --syntax-string: #7be05a;
+  --syntax-constant: #c08bff;
+  --syntax-variable: #6cbcff;
+  --syntax-function: #ff9a3c;
+  --syntax-type: #ffd24a;
+  --syntax-comment: #7a6259;
+  --editor-bool-fg: #c08bff;
+  --editor-null-fg: #c08bff;
+  --editor-number-fg: #c08bff;
+  --editor-operatorKeyword-fg: #ff4a3a;
+  --editor-sql-alias-fg: #6cbcff;
+  --editor-font-weight: 500;
+}
+
+/* ==========================================================================
+   4. Flavor CSS — HUD styling
+   ========================================================================== */
+
+/* Statusbar: beveled gunmetal HUD strip with glowing red readout */
+.light-theme footer.statusbar:not(.red):not(.pink):not(.blue):not(.green):not(.purple):not(.yellow):not(.orange),
+.dark-theme footer.statusbar:not(.red):not(.pink):not(.blue):not(.green):not(.purple):not(.yellow):not(.orange) {
+  background: linear-gradient(to bottom, var(--hf-gunmetal-hi) 0%, var(--hf-gunmetal) 35%, var(--hf-gunmetal-lo) 100%);
+  border-top: 2px solid var(--hf-fire);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 -2px 12px rgba(224, 48, 30, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+
+.dark-theme footer.statusbar .statusbar-item,
+.light-theme footer.statusbar .statusbar-item {
+  text-shadow: 0 0 6px rgba(255, 59, 47, 0.6);
+}
+
+/* Titlebar: thin fire line underneath */
+.light-theme .titlebar-wrapper,
+.dark-theme .titlebar-wrapper {
+  border-bottom: 1px solid var(--red-a6);
+}
+
+/* Primary buttons: blocky, uppercase, glowing */
+.light-theme .btn.btn-primary,
+.dark-theme .btn.btn-primary {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  border: 1px solid var(--hf-fire-hot);
+  transition: box-shadow 120ms ease, background 120ms ease;
+}
+
+.light-theme .btn.btn-primary:hover,
+.dark-theme .btn.btn-primary:hover {
+  box-shadow: 0 0 10px rgba(255, 106, 26, 0.9), 0 0 28px rgba(224, 48, 30, 0.6);
+}
+
+/* Active tab: fire strip on top, like a selected weapon slot */
+.light-theme .tabs-header .nav-link.active,
+.dark-theme .tabs-header .nav-link.active {
+  box-shadow: inset 0 2px 0 var(--hf-fire);
+}
+
+/* Sidebar: faint heat haze rising from the bottom */
+.dark-theme .sidebar {
+  background-image: linear-gradient(to top, rgba(224, 48, 30, 0.07) 0%, transparent 40%);
+}
+
+/* Data grid header: stamped-metal look */
+.dark-theme .tabulator .tabulator-header {
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.04), transparent);
+}
+
+.light-theme .tabulator .tabulator-header .tabulator-col-title,
+.dark-theme .tabulator .tabulator-header .tabulator-col-title {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Modals: riveted steel plate */
+.light-theme .v--modal,
+.dark-theme .v--modal {
+  border: 1px solid var(--red-a7);
+  box-shadow: var(--panel-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Inputs glow on focus */
+.dark-theme input.form-control:focus,
+.dark-theme .form-control:focus {
+  box-shadow: var(--hf-glow-soft);
+}
+
+/* Editor: CRT scanlines + red vignette in dark mode (very subtle) */
+.dark-theme .cm-editor {
+  background-image:
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0.18) 3px),
+    radial-gradient(ellipse at center, transparent 60%, rgba(120, 10, 0, 0.18) 100%);
+}
+
+/* Editor cursor glows */
+.dark-theme .cm-cursor {
+  box-shadow: 0 0 6px var(--hf-fire-hot);
+}
+
+/* Text selection everywhere */
+.dark-theme ::selection {
+  background: rgba(224, 48, 30, 0.45);
+  color: #fff;
+}
+
+/* ==========================================================================
+   5. Super shotgun folders
+   Folder icons are Material Icons ligatures ("folder"). Hide the glyph and
+   paint a double-barrel in its place. Expanded folders break the action open.
+   ========================================================================== */
+
+.light-theme .material-icons.folder-icon,
+.dark-theme .material-icons.folder-icon,
+.light-theme .material-icons.schema-icon,
+.dark-theme .material-icons.schema-icon {
+  display: inline-block;
+  width: 2.25em;
+  min-width: 2.25em;
+  height: 1em;
+  overflow: hidden;
+  color: transparent !important;
+  text-indent: -999px;
+  background: url("icons/super-shotgun-closed.svg") center / contain no-repeat;
+  filter: drop-shadow(0 0 2px rgba(224, 48, 30, 0.35));
+}
+
+/* Break-action open when expanded */
+.light-theme .BksTree-folder[data-expanded="true"] .material-icons.folder-icon,
+.dark-theme .BksTree-folder[data-expanded="true"] .material-icons.folder-icon,
+.light-theme .folder-btn.open .material-icons.schema-icon,
+.dark-theme .folder-btn.open .material-icons.schema-icon {
+  background-image: url("icons/super-shotgun-open.svg");
+}
+
+/* Muzzle flash on hover */
+.dark-theme .BksTree-folder:hover .material-icons.folder-icon,
+.dark-theme .folder-btn:hover .material-icons.schema-icon {
+  filter: drop-shadow(0 0 3px rgba(255, 106, 26, 0.9)) drop-shadow(0 0 8px rgba(224, 48, 30, 0.6));
+}

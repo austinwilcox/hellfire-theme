@@ -1,0 +1,63 @@
+name: Release Theme
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on version tags like v1.0.0
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get project information
+        id: project_info
+        run: |
+          PROJECT_ID=$(jq -r '.id' manifest.json)
+          VERSION=$(jq -r '.version' manifest.json)
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          echo "project_id=$PROJECT_ID" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag_version=$TAG_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Verify version match
+        run: |
+          TAG_VERSION="${{ steps.project_info.outputs.tag_version }}"
+          MANIFEST_VERSION="${{ steps.project_info.outputs.version }}"
+          if [ "$TAG_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "Version mismatch: tag=$TAG_VERSION, manifest=$MANIFEST_VERSION"
+            exit 1
+          fi
+          echo "Version match confirmed: $TAG_VERSION"
+
+      - name: Check if release exists
+        run: |
+          if gh release view "${GITHUB_REF#refs/tags/}" &>/dev/null; then
+            echo "Release ${GITHUB_REF#refs/tags/} already exists"
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create zip archive
+        id: create_zip
+        run: |
+          ZIP_NAME="${{ steps.project_info.outputs.project_id }}-${{ steps.project_info.outputs.version }}.zip"
+          # icons/ holds the super shotgun SVGs that style.css references
+          zip -r "$ZIP_NAME" manifest.json style.css README.md icons
+          echo "zip_name=$ZIP_NAME" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          name: "Release v${{ steps.project_info.outputs.version }}"
+          files: |
+            ${{ steps.create_zip.outputs.zip_name }}
+            manifest.json
