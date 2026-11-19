@@ -46,3 +46,5 @@ The release workflow builds `hellfire-<version>.zip` and drafts a GitHub release
 ## Disclaimer
 
 Fan-made and unofficial. Not affiliated with or endorsed by id Software, Bethesda or Microsoft. All artwork in this repo is original.
+
+This theme was AI generated, including the CSS, the super shotgun icons and this README, with Claude (Anthropic) via Claude Code.
