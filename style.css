@@ -347,6 +347,7 @@
   overflow: hidden;
   color: transparent !important;
   text-indent: -999px;
+  margin-right: 0.6em;
   background: url("icons/super-shotgun-closed.svg") center / contain no-repeat;
   filter: drop-shadow(0 0 2px rgba(224, 48, 30, 0.35));
 }
